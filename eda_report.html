@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineMatch EDA Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          background: #f5f7fa; color: #1a1a1a; }
+  .header { background: #0D7377; color: white; padding: 32px 40px; }
+  .header h1 { font-size: 1.8rem; font-weight: 600; margin-bottom: 6px; }
+  .header p  { opacity: 0.85; font-size: 0.95rem; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                  gap: 14px; margin-bottom: 32px; }
+  .stat { background: white; border-radius: 10px; padding: 16px;
+           border: 0.5px solid #e2e8f0; text-align: center; }
+  .stat-val { font-size: 1.6rem; font-weight: 600; color: #0D7377; }
+  .stat-label { font-size: 0.75rem; color: #666; margin-top: 4px; }
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 1rem; font-weight: 600; color: #0D7377;
+                     margin-bottom: 16px; padding-bottom: 8px;
+                     border-bottom: 2px solid #e2e8f0; }
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-card { background: white; border-radius: 10px; padding: 20px;
+                  border: 0.5px solid #e2e8f0; }
+  .chart-card h3 { font-size: 0.85rem; color: #444; margin-bottom: 14px; font-weight: 500; }
+  .fill-row { display: flex; align-items: center; gap: 10px;
+               margin-bottom: 10px; font-size: 0.85rem; }
+  .fill-label { width: 100px; color: #444; }
+  .fill-bar-wrap { flex: 1; background: #f0f0f0; border-radius: 4px; height: 10px; overflow: hidden; }
+  .fill-bar { height: 100%; border-radius: 4px; }
+  .fill-pct { width: 40px; text-align: right; font-weight: 500; color: #333; }
+  .model-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .model-card { background: white; border-radius: 10px; padding: 20px;
+                  border: 0.5px solid #e2e8f0; }
+  .model-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+  .model-subtitle { font-size: 0.75rem; color: #666; margin-bottom: 12px; line-height: 1.5; }
+  .model-inputs { font-size: 0.75rem; color: #444; margin-bottom: 6px; }
+  .model-inputs strong { color: #0D7377; }
+  .pill { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
+           margin: 2px; font-weight: 500; }
+  .p-green  { background: #e8f5e9; color: #2e7d32; }
+  .p-blue   { background: #e3f2fd; color: #1565c0; }
+  .p-purple { background: #f3e5f5; color: #6a1b9a; }
+  .insight  { background: #f0faf8; border-left: 3px solid #0D7377; padding: 10px 14px;
+               border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #333;
+               line-height: 1.6; margin-top: 10px; }
+  @media (max-width: 700px) {
+    .chart-grid, .model-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 CineMatch — EDA Report</h1>
+  <p>Exploratory analysis of 1389 movies from TMDB · Pre-modelling review</p>
+</div>
+
+<div class="container">
+
+  <!-- Key stats -->
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-val">1,389</div><div class="stat-label">Total movies</div></div>
+    <div class="stat"><div class="stat-val">6.95</div><div class="stat-label">Avg rating</div></div>
+    <div class="stat"><div class="stat-val">109m</div><div class="stat-label">Median runtime</div></div>
+    <div class="stat"><div class="stat-val">1950 – 2025</div><div class="stat-label">Year range</div></div>
+    <div class="stat"><div class="stat-val">19</div><div class="stat-label">Unique genres</div></div>
+    <div class="stat"><div class="stat-val">100.0%</div><div class="stat-label">Have poster</div></div>
+  </div>
+
+  <!-- Fill rates -->
+  <div class="section">
+    <div class="section-title">1. Fill Rates — Data Completeness</div>
+    <div class="chart-card">
+      <div class="fill-row">
+          <span class="fill-label">title</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">overview</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">genres</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">rating</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">votes</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">runtime</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">year</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">poster</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div><div class="fill-row">
+          <span class="fill-label">popularity</span>
+          <div class="fill-bar-wrap">
+            <div class="fill-bar" style="width:100.0%;
+              background:#0D7377;"></div>
+          </div>
+          <span class="fill-pct">100.0%</span>
+        </div>
+      <div class="insight">
+        🟢 Green ≥ 90% · 🟡 Amber ≥ 70% · 🔴 Red &lt; 70% &nbsp;|&nbsp;
+        Fields below 80% will need imputation or exclusion before modelling.
+        Runtime and overview are critical for our models — check their fill rates carefully.
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="section">
+    <div class="section-title">2. Distributions</div>
+    <div class="chart-grid">
+
+      <div class="chart-card">
+        <h3>Rating distribution</h3>
+        <div style="position:relative; height:220px;">
+          <canvas id="ratingChart"></canvas>
+        </div>
+        <div class="insight">Most movies cluster between 5–8. Ratings below 4 are rare after our 50-vote filter. We'll use rating as a feature in K-Means and as a re-ranking signal.</div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Popularity distribution (TMDB score)</h3>
+        <div style="position:relative; height:220px;">
+          <canvas id="popChart"></canvas>
+        </div>
+        <div class="insight">Heavily right-skewed — a few blockbusters dominate. We'll apply log(popularity) in our collaborative filter to prevent blockbusters from drowning out niche films.</div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Runtime distribution (minutes)</h3>
+        <div style="position:relative; height:220px;">
+          <canvas id="runtimeChart"></canvas>
+        </div>
+        <div class="insight">Peak at 90–120 mins — the standard feature film. The user's "time commitment" filter maps directly onto these bins. Anything &lt;30 or &gt;240 will be capped/excluded.</div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Release year distribution</h3>
+        <div style="position:relative; height:220px;">
+          <canvas id="yearChart"></canvas>
+        </div>
+        <div class="insight">Dataset is recency-biased (expected — TMDB popularity favours newer films). Pre-2000 films are under-represented but present. Year won't be a model feature but can be a user filter.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Genre chart -->
+  <div class="section">
+    <div class="section-title">3. Genre Distribution</div>
+    <div class="chart-card">
+      <h3>Top genres by movie count (multi-label)</h3>
+      <div style="position:relative; height:260px;">
+        <canvas id="genreChart"></canvas>
+      </div>
+      <div class="insight">Drama and Action dominate — expected for a popularity-sorted dataset. Genre is our primary K-Means clustering feature and one of the user's input dimensions.</div>
+    </div>
+  </div>
+
+  <!-- Model rationale -->
+  <div class="section">
+    <div class="section-title">4. Why These 3 Models? — Design Rationale</div>
+    <div class="model-grid">
+
+      <div class="model-card">
+        <div class="model-title">🔵 Model 1 — KNN on Sentence Embeddings</div>
+        <div class="model-subtitle">Answers: "Give me movies semantically similar to the ones I loved."</div>
+        <div class="model-inputs"><strong>Input features:</strong> title + overview + genres → 384-dim vector via all-MiniLM-L6-v2</div>
+        <div class="model-inputs"><strong>Why this model:</strong> Overview text carries rich signal (tone, plot, theme) that genre labels alone miss. "Parasite" and "Knives Out" share no genre overlap but are semantically close.</div>
+        <div class="model-inputs" style="margin-top:8px;"><strong>Fill rate dependency:</strong> Needs overview ✓ and genres ✓</div>
+        <div><span class="pill p-blue">Unsupervised</span><span class="pill p-blue">Content-based</span><span class="pill p-blue">No labels needed</span></div>
+      </div>
+
+      <div class="model-card">
+        <div class="model-title">🟢 Model 2 — K-Means Clustering</div>
+        <div class="model-subtitle">Answers: "Filter to movies in the right mood, genre and length."</div>
+        <div class="model-inputs"><strong>Input features:</strong> genre (one-hot) + rating + runtime + popularity</div>
+        <div class="model-inputs"><strong>Why this model:</strong> Groups movies into natural mood archetypes (dark thriller, feel-good comedy, epic action etc.) without any labels. User preference inputs map to clusters — pre-filtering the KNN search space from 1389 → ~70 movies.</div>
+        <div class="model-inputs" style="margin-top:8px;"><strong>Fill rate dependency:</strong> Needs genres ✓, runtime ✓, rating ✓</div>
+        <div><span class="pill p-green">Unsupervised</span><span class="pill p-green">Dimensionality filter</span></div>
+      </div>
+
+      <div class="model-card">
+        <div class="model-title">🟣 Model 3 — Collaborative Filter (TruncatedSVD)</div>
+        <div class="model-subtitle">Answers: "People with your taste also loved these."</div>
+        <div class="model-inputs"><strong>Input features:</strong> User-movie affinity matrix → 50 latent taste dimensions via matrix factorisation</div>
+        <div class="model-inputs"><strong>Why this model:</strong> Captures latent taste patterns that content features miss. Someone who loves "The Godfather" + "Goodfellas" probably likes "Casino" — even though the overviews aren't similar enough for KNN to catch it.</div>
+        <div class="model-inputs" style="margin-top:8px;"><strong>Fill rate dependency:</strong> Needs rating ✓ + votes ✓ + popularity ✓</div>
+        <div><span class="pill p-purple">Unsupervised</span><span class="pill p-purple">Latent factors</span><span class="pill p-purple">Matrix factorisation</span></div>
+      </div>
+
+    </div>
+
+    <div class="insight" style="margin-top:16px; font-size:0.85rem;">
+      <strong>How the 3 models combine:</strong> K-Means narrows the candidate pool by mood/genre/runtime preference first.
+      KNN and collaborative filter each score the remaining candidates independently.
+      Final rank = KNN score × 50% + CF score × 30% + cluster proximity × 20%.
+      This weighted ensemble handles the cold-start problem: new users with no history
+      fall back to KNN + clustering until enough signal accumulates for CF.
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TEAL   = '#0D7377';
+const TEAL2  = '#14a8ad';
+const GRAY   = '#e2e8f0';
+
+new Chart(document.getElementById('ratingChart'), {
+  type: 'bar',
+  data: {
+    labels: ["0-2", "2-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"],
+    datasets: [{ label: 'Movies', data: [0, 4, 27, 145, 517, 566, 130, 0],
+      backgroundColor: ["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#22c55e", "#0D7377", "#0e9ea3", "#06b6d4"],
+      borderRadius: 4 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ y:{ grid:{ color:GRAY } }, x:{ grid:{ display:false } } } }
+});
+
+new Chart(document.getElementById('popChart'), {
+  type: 'bar',
+  data: {
+    labels: ["0-5", "5-10", "10-20", "20-50", "50-100", "100-200", "200-500", "500+"],
+    datasets: [{ label: 'Movies', data: [8, 623, 593, 125, 28, 9, 2, 1],
+      backgroundColor: TEAL, borderRadius: 4 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ y:{ grid:{ color:GRAY } }, x:{ grid:{ display:false } } } }
+});
+
+new Chart(document.getElementById('runtimeChart'), {
+  type: 'bar',
+  data: {
+    labels: ["<30", "30-60", "60-90", "90-100", "100-110", "110-120", "120-135", "135-150", "150-180", "180-240", "240+"],
+    datasets: [{ label: 'Movies', data: [10, 9, 171, 277, 263, 214, 220, 126, 76, 21, 2],
+      backgroundColor: '#6366f1', borderRadius: 4 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ y:{ grid:{ color:GRAY } }, x:{ grid:{ display:false } },
+      x:{ ticks:{ maxRotation:45 } } } }
+});
+
+const decadeLabels = ["1950s", "1960s", "1970s", "1980s", "1990s", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+const decadeData   = [15, 21, 39, 88, 139, 16, 24, 29, 23, 22, 18, 25, 29, 31, 28, 34, 30, 36, 28, 42, 36, 31, 48, 42, 42, 20, 37, 53, 61, 69, 180];
+const barColors    = ["#94a3b8", "#94a3b8", "#94a3b8", "#94a3b8", "#94a3b8", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377", "#0D7377"];
+new Chart(document.getElementById('yearChart'), {
+  type: 'bar',
+  data: {
+    labels: decadeLabels,
+    datasets: [{ label: 'Movies', data: decadeData,
+      backgroundColor: barColors, borderRadius: 3 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ y:{ grid:{ color:GRAY } },
+      x:{ grid:{ display:false }, ticks:{ maxRotation:45, font:{ size:10 } } } } }
+});
+
+new Chart(document.getElementById('genreChart'), {
+  type: 'bar',
+  data: {
+    labels: ["Action", "Drama", "Thriller", "Adventure", "Comedy", "Sci-Fi", "Fantasy", "Horror", "Animation", "Family", "Crime", "Romance", "Mystery", "History", "War"],
+    datasets: [{ label: 'Movies', data: [497, 481, 397, 379, 364, 280, 222, 210, 196, 194, 192, 174, 124, 51, 47],
+      backgroundColor: TEAL2, borderRadius: 4 }]
+  },
+  options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ x:{ grid:{ color:GRAY } }, y:{ grid:{ display:false } } } }
+});
+</script>
+</body>
+</html>
