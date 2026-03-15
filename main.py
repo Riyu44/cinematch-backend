@@ -21,6 +21,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app = FastAPI(title="CineMatch API", version="1.0")
+
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# ── This must respond BEFORE models load ─────────────
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 # ── Load all models and data at startup (runs once) ───────────────────────────
 print("Loading models and data...")
 
@@ -333,6 +342,10 @@ def get_recommendations(req: RecommendRequest):
 
 
 # ── Run locally ───────────────────────────────────────────────────────────────
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
