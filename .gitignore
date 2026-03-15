@@ -2,3 +2,10 @@ venv/
 .env
 __pycache__/
 *.pyc
+*.npy
+*.pkl
+movies.csv
+venv/
+.env
+__pycache__/
+*.pyc
