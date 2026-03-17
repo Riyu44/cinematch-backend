@@ -1,6 +1,7 @@
 venv/
 .env
 __pycache__/
+<<<<<<< HEAD
 *.pyc
 <<<<<<< HEAD
 *.npy
@@ -13,3 +14,6 @@ __pycache__/
 =======
 movies.csv
 >>>>>>> faceb02 (adds model files)
+=======
+*.pyc
+>>>>>>> b08ac35 (deploy to huggingface spaces)

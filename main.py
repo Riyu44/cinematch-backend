@@ -338,6 +338,11 @@ def get_recommendations(req: RecommendRequest):
 # ── Run locally ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
+<<<<<<< HEAD
     port = int(os.environ.get("PORT", "8000"))
     reload = os.environ.get("RELOAD", "").strip().lower() in {"1", "true", "yes", "y"}
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=reload)
+=======
+    port = int(os.environ.get("PORT", 7860))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
+>>>>>>> b08ac35 (deploy to huggingface spaces)
