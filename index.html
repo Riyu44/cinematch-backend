@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CineMatch — AI Movie Recommender</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+           background: #0D0D0D; color: #e0e0e0; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #0D0D0D 0%, #0d3d3f 100%);
+            padding: 72px 24px 56px; text-align: center;
+            border-bottom: 1px solid #1a1a1a; }
+    .hero-icon { font-size: 56px; margin-bottom: 16px; }
+    .hero h1 { font-size: 2.6rem; font-weight: 700; color: #fff;
+               margin-bottom: 10px; letter-spacing: -0.5px; }
+    .hero p { font-size: 1.1rem; color: #888; max-width: 520px;
+              margin: 0 auto 32px; line-height: 1.7; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 13px 28px; border-radius: 10px;
+           font-size: 15px; font-weight: 600; text-decoration: none;
+           transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #0D7377; color: #fff; }
+    .btn-secondary { background: #1a1a1a; color: #ccc;
+                     border: 1px solid #2a2a2a; }
+
+    /* ── Stats strip ── */
+    .stats { display: flex; justify-content: center; gap: 0;
+             border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a;
+             background: #111; flex-wrap: wrap; }
+    .stat { padding: 24px 40px; text-align: center;
+            border-right: 1px solid #1a1a1a; flex: 1; min-width: 120px; }
+    .stat:last-child { border-right: none; }
+    .stat-val { font-size: 1.6rem; font-weight: 700; color: #0D7377; }
+    .stat-label { font-size: 0.75rem; color: #555; margin-top: 4px;
+                  text-transform: uppercase; letter-spacing: 0.6px; }
+
+    /* ── Sections ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 64px 24px; }
+    .section-label { font-size: 11px; font-weight: 600; color: #0D7377;
+                     text-transform: uppercase; letter-spacing: 1px;
+                     margin-bottom: 10px; }
+    .section-title { font-size: 1.5rem; font-weight: 700; color: #fff;
+                     margin-bottom: 14px; }
+    .section-body { font-size: 0.95rem; color: #777; line-height: 1.8;
+                    max-width: 640px; }
+    .divider { border: none; border-top: 1px solid #1a1a1a; margin: 64px 0; }
+
+    /* ── How it works ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+             gap: 16px; margin-top: 32px; }
+    .step-card { background: #111; border: 1px solid #1a1a1a;
+                 border-radius: 12px; padding: 20px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%;
+                background: #0D3d3f; color: #0D7377; font-size: 13px;
+                font-weight: 700; display: flex; align-items: center;
+                justify-content: center; margin-bottom: 12px; }
+    .step-card h3 { font-size: 14px; font-weight: 600; color: #fff;
+                    margin-bottom: 6px; }
+    .step-card p { font-size: 13px; color: #666; line-height: 1.6; }
+
+    /* ── ML Pipeline ── */
+    .model-grid { display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                  gap: 14px; margin-top: 28px; }
+    .model-card { background: #111; border: 1px solid #1a1a1a;
+                  border-radius: 12px; padding: 20px; }
+    .model-card h3 { font-size: 14px; font-weight: 600; color: #fff;
+                     margin-bottom: 6px; }
+    .model-card p { font-size: 12px; color: #666; line-height: 1.6;
+                    margin-bottom: 10px; }
+    .model-weight { font-size: 11px; color: #0D7377; font-weight: 600; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 32px; }
+    .tag { background: #1a1a1a; border: 1px solid #2a2a2a; color: #888;
+           font-size: 12px; padding: 4px 10px; border-radius: 6px; }
+
+    /* ── Architecture ── */
+    .arch { background: #111; border: 1px solid #1a1a1a; border-radius: 12px;
+            padding: 24px; margin-top: 28px; }
+    .arch-row { display: flex; align-items: center; gap: 10px;
+                margin-bottom: 12px; flex-wrap: wrap; }
+    .arch-box { background: #1a1a1a; border-radius: 8px; padding: 8px 14px;
+                font-size: 12px; color: #ccc; border: 1px solid #2a2a2a; }
+    .arch-arrow { color: #0D7377; font-size: 16px; }
+
+    /* ── Footer ── */
+    footer { border-top: 1px solid #1a1a1a; padding: 32px 24px;
+             text-align: center; background: #0a0a0a; }
+    footer p { font-size: 13px; color: #444; }
+    footer a { color: #0D7377; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-icon">🎬</div>
+    <h1>CineMatch</h1>
+    <p>An AI-powered Android app that recommends movies and series using a
+       3-model unsupervised ML pipeline — built on 1,389 TMDB titles.</p>
+    <div class="btn-row">
+      <a class="btn btn-primary"
+         href="https://expo.dev/accounts/riyu44/projects/cinematch/builds/791f5f93-b38d-4b20-b76a-7cfc58e4ca61"
+         target="_blank">⬇ Download APK</a>
+      <a class="btn btn-secondary"
+         href="https://github.com/Riyu44/cinematch-backend"
+         target="_blank">View on GitHub</a>
+      <a class="btn btn-secondary"
+         href="https://huggingface.co/spaces/Riyu44/cinematch-api"
+         target="_blank">Live API ↗</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val">1,389</div>
+      <div class="stat-label">Movies indexed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">3</div>
+      <div class="stat-label">ML models</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">384</div>
+      <div class="stat-label">Embedding dimensions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">10</div>
+      <div class="stat-label">Recommendations returned</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">$0</div>
+      <div class="stat-label">Infrastructure cost</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- How it works -->
+    <div class="section-label">User flow</div>
+    <div class="section-title">How it works</div>
+    <div class="section-body">
+      Three screens, zero account required. Tell the app what you've watched,
+      set your preferences, and get 10 ranked recommendations in seconds.
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Add watched movies</h3>
+        <p>Search-as-you-type from 1,389 TMDB titles. Add up to 5 movies
+           you've enjoyed — posters load instantly.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Set preferences</h3>
+        <p>Pick genres, choose a time commitment (under 90 mins to 3+ hrs),
+           and set a minimum rating threshold.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Get 10 recommendations</h3>
+        <p>A ranked grid of 10 movies with posters, match scores, and a
+           plain-English reason for each pick. Tap for full details.</p>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ML Pipeline -->
+    <div class="section-label">Machine Learning</div>
+    <div class="section-title">3-model unsupervised pipeline</div>
+    <div class="section-body">
+      No labelled training data. All three models discover structure from
+      the data itself — content similarity, genre clusters, and latent
+      taste patterns.
+    </div>
+    <div class="model-grid">
+      <div class="model-card">
+        <h3>KNN on Sentence Embeddings</h3>
+        <p>Every movie's title, genres, and overview are encoded into a
+           384-dimensional vector using <code>all-MiniLM-L6-v2</code>.
+           User's watched movies are averaged into a taste vector and the
+           20 nearest neighbours are retrieved by cosine similarity.</p>
+        <div class="model-weight">Weight in ensemble: 50%</div>
+      </div>
+      <div class="model-card">
+        <h3>K-Means Clustering</h3>
+        <p>All 1,389 movies are grouped into 20 mood/genre clusters using
+           genre one-hot encoding + normalised rating, runtime, and
+           popularity. User preferences pre-filter the candidate pool from
+           1,389 → ~70 before scoring.</p>
+        <div class="model-weight">Weight in ensemble: 20% + pre-filter</div>
+      </div>
+      <div class="model-card">
+        <h3>Collaborative Filter (TruncatedSVD)</h3>
+        <p>A user-movie affinity matrix is factorised into 50 latent taste
+           dimensions. New users are projected into this space via their
+           watched movies to find taste-similar users and borrow their
+           top-rated unseen titles.</p>
+        <div class="model-weight">Weight in ensemble: 30%</div>
+      </div>
+    </div>
+
+    <!-- Tech tags -->
+    <div class="tag-row">
+      <span class="tag">Python</span>
+      <span class="tag">FastAPI</span>
+      <span class="tag">scikit-learn</span>
+      <span class="tag">sentence-transformers</span>
+      <span class="tag">React Native</span>
+      <span class="tag">Expo</span>
+      <span class="tag">TMDB API</span>
+      <span class="tag">Hugging Face Spaces</span>
+      <span class="tag">KNN</span>
+      <span class="tag">K-Means</span>
+      <span class="tag">TruncatedSVD</span>
+      <span class="tag">NLP Embeddings</span>
+      <span class="tag">Collaborative Filtering</span>
+      <span class="tag">Docker</span>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Architecture -->
+    <div class="section-label">System design</div>
+    <div class="section-title">Architecture</div>
+    <div class="arch">
+      <div class="arch-row">
+        <div class="arch-box">📱 React Native app</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">FastAPI backend</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">K-Means pre-filter</div>
+      </div>
+      <div class="arch-row" style="padding-left: 60px;">
+        <div class="arch-arrow">↓</div>
+      </div>
+      <div class="arch-row">
+        <div class="arch-box">KNN (50%) + SVD (30%) + Cluster (20%)</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">Weighted merge + re-rank</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">Top 10 + why labels</div>
+      </div>
+      <div style="margin-top: 16px; font-size: 12px; color: #555; line-height: 1.7;">
+        Backend hosted on Hugging Face Spaces (Docker, always-on free tier).
+        Model files loaded at startup from repo. Sentence transformer
+        pre-downloaded at Docker build time to eliminate cold-start latency.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      Built by
+      <a href="https://linkedin.com/in/priyansh-shrivastava-data">Priyansh Shrivastava</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/Riyu44/cinematch-backend">Backend repo</a>
+      &nbsp;·&nbsp;
+      <a href="https://huggingface.co/spaces/Riyu44/cinematch-api">Live API</a>
+    </p>
+  </footer>
+
+</body>
+</html>
